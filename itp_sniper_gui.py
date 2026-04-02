@@ -18,6 +18,7 @@ layout = [
     [sg.Text("ITP 抢票程序（UI版）", font=("Helvetica", 16))],
     [sg.Text("用户名"), sg.InputText(key="-USERNAME-")],
     [sg.Text("密码"), sg.InputText(key="-PASSWORD-", password_char="*")],
+    [sg.Text("目标产品 URL"), sg.InputText(key="-PRODUCT_URL-")],
     [sg.Text("活动 ID"), sg.InputText(key="-EVENT_ID-")],
     [sg.Text("座位/档位"), sg.InputText(key="-SEAT-")],
     [sg.Text("登录 URL"), sg.InputText("https://example.itp.com/api/login", key="-LOGIN_URL-")],
@@ -85,11 +86,19 @@ def run_sniper(values):
     running = True
     username = values["-USERNAME-"]
     password = values["-PASSWORD-"]
+    product_url = values.get("-PRODUCT_URL-", "").strip()
     event_id = values["-EVENT_ID-"]
     seat = values["-SEAT-"]
     login_url = values["-LOGIN_URL-"]
     check_url = values["-CHECK_URL-"]
     order_url = values["-ORDER_URL-"]
+
+    if product_url:
+        # 优先使用自定义产品 URL 作为查询端点（可根据实际场景调整）
+        check_url = product_url
+        if not order_url:
+            order_url = product_url
+
     max_retries = int(values["-MAX_RETRIES-"])
     delay_min = float(values["-DELAY_MIN-"])
     delay_max = float(values["-DELAY_MAX-"])
